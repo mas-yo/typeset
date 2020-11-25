@@ -1,10 +1,4 @@
 
-trait TypeRef<T> {
-    fn type_ref(&self) -> &T;
-}
-trait TypeRefMut<T> {
-    fn type_ref_mut(&mut self) -> &mut T;
-}
 
 #[macro_export]
 macro_rules! inner_typeset {
@@ -19,6 +13,12 @@ macro_rules! inner_typeset {
 #[macro_export]
 macro_rules! impl_typeset {
     ( $torg:ty, $t: ty ) => {
+        pub trait TypeRef<T> {
+            fn type_ref(&self) -> &T;
+        }
+        pub trait TypeRefMut<T> {
+            fn type_ref_mut(&mut self) -> &mut T;
+        }
         impl TypeRef<$t> for $torg {
             fn type_ref(&self) -> &$t {
                 &self.0
@@ -55,14 +55,14 @@ macro_rules! impl_typeset {
                 }
             }
         )+
-        impl_typeset!( inner_typeset!($($tt),+), $($tt),+ )
+        impl_typeset!{ inner_typeset!($($tt),+), $($tt),+ }
     };
 }
 #[macro_export]
 macro_rules! typeset {
     ( $i:ident { $($t:ty),+ } ) => {
         type $i = inner_typeset!($($t),+);
-        impl_typeset!($i, $($t),+)
+        impl_typeset!{$i, $($t),+}
     }
 }
 
