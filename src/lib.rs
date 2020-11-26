@@ -5,7 +5,7 @@ macro_rules! inner_typeset {
     ( $t: ty ) => {
         ($t, ())
     };
-    ( $th:ty, $( $tt: ty ),+ ) => {
+    ( $th:ty, $( $tt: ty ),+ $(,)? ) => {
         ($th, inner_typeset!($($tt),+))
     };
 }
@@ -30,7 +30,7 @@ macro_rules! impl_typeset {
             }
         }
     };
-    ( $torg:ty, $th:ty, $( $tt: ty ),+ ) => {
+    ( $torg:ty, $th:ty, $( $tt: ty ),+ $(,)? ) => {
         impl TypeRef<$th> for $torg {
             fn type_ref(&self) -> &$th {
                 &self.0
@@ -60,7 +60,7 @@ macro_rules! impl_typeset {
 }
 #[macro_export]
 macro_rules! typeset {
-    ( $i:ident { $($t:ty),+ } ) => {
+    ( $i:ident { $($t:ty),+ $(,)? } ) => {
         type $i = inner_typeset!($($t),+);
         impl_typeset!{$i, $($t),+}
     }
